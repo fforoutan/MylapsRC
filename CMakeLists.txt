@@ -8,5 +8,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 enable_testing()
 
 add_subdirectory(client)
-#add_subdirectory(server)
+add_subdirectory(server)
 
