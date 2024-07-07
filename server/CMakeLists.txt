@@ -6,10 +6,14 @@ set(SOURCES
     src/server_manager.cpp
     src/server_socket.cpp
     src/message_handler.cpp
+    src/race_analyser.cpp
+    src/driver.cpp
     include/server.h
     include/server_manager.h
     include/server_socket.h
     include/message_handler.h
+    include/race_analyser.h
+    include/driver.h
 )
 
 include_directories(${PROJECT_SOURCE_DIR}/include)

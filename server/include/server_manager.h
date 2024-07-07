@@ -3,6 +3,9 @@
 
 #include <memory>
 #include "server_socket.h"
+#include "race_analyser.h"
+#include "message_handler.h"
+
 /**
  * @brief The ServerManager class manages client connections and race data.
  */
@@ -27,6 +30,8 @@ private:
     void HandleMessage(const std::string& message, SOCKET client_socket);
 
     std::unique_ptr<server_socket> server_socket_;
+    std::unique_ptr<message_handler> message_handler_;
+    std::unordered_map<SOCKET, std::unique_ptr<race_analyser>> client_data_;
     int total_laps_;
 
 };

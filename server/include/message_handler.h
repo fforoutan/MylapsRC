@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "race_analyser.h"
 
 /**
  * @brief The message_handler class provides methods to analyze and interpret incoming messages.
@@ -23,6 +24,12 @@ public:
      */
     int ExtractDriverNumber(const std::string& message) const;
 
+    /**
+     * @brief Parses race data from the incoming message.
+     * @param message The incoming message.
+     * @return A vector of LapTime objects containing the parsed race data.
+     */
+    std::vector<LapTime> ParseRaceData(const std::string& message) const;
 
     /**
      * @brief Converts a time string in HH:MM:SS format to seconds.
