@@ -19,6 +19,13 @@ public:
      */
     Q_INVOKABLE void sendCSVData();
 
+    /**
+     * @brief Sends a request to the server to get the average time for a specific driver.
+     * @param driver_number The driver number to request the average time for.
+     */
+    Q_INVOKABLE void requestAverageTime(const QString& driver_number);
+
+
 private slots:
     /**
      * @brief Handles messages received from the server and emits a signal with the response.
@@ -37,6 +44,13 @@ private:
      * @param filename The name of the CSV file to read.
      */
     void readCSVAndSend(const QString& filename);
+
+    /**
+     * @brief Converts a time in seconds to a formatted string.
+     * @param seconds The time in seconds to format.
+     * @return The formatted time string in HH:MM:SS:MSMS format.
+     */
+    QString formatTime(double seconds);
 
     /**
      * @brief Loads the settings from the configuration file.

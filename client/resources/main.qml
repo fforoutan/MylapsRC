@@ -60,6 +60,8 @@ ApplicationWindow {
                     if (!driverNumberInput.text.match(/^\d+$/)) {
                         driverNumberInput.clear()
                         driverNumberInput.placeholderText = qsTr("Insert positive Numbers")
+                    } else {
+                        client.requestAverageTime(driverNumberInput.text)
                     }
                 }
                 width: 150
@@ -94,6 +96,12 @@ ApplicationWindow {
                     radius: 10
                 }
                 padding: 10
+            }
+        }
+        Connections {
+            target: client
+            function onResponseReceived(response) {
+                responseArea.text = response;
             }
         }
     }

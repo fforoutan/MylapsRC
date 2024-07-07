@@ -6,6 +6,7 @@ find_package(Qt5 COMPONENTS Core Gui Widgets Network Qml Quick REQUIRED)
 add_library(client_lib src/client.cpp resources/client.qrc)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
+add_definitions(-DSOURCE_DIR="${CMAKE_SOURCE_DIR}")
 target_include_directories(client_lib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${Qt5Core_INCLUDE_DIRS}

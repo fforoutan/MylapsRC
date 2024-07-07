@@ -29,6 +29,18 @@ void Client::readMessage() {
     QByteArray data = socket_->readAll();
     QString response = QString::fromUtf8(data);
     qDebug() << "respond:" << response;
+    if (response.startsWith("Driver")) {
+        // Extract the average time from the response
+        QStringList parts = response.split(':');
+        if (parts.size() == 2) {
+            double avg_time_in_seconds = parts[1].trimmed().toDouble();
+            qDebug() << avg_time_in_seconds;
+            QString formatted_time = formatTime(avg_time_in_seconds);
+            qDebug() << formatted_time;
+            response = parts[0] + " = " + formatted_time;
+        }
+    }
+
     emit responseReceived(response);
 }
 
@@ -75,6 +87,28 @@ void Client::readCSVAndSend(const QString& filename) {
     file.close();
 }
 
+void Client::requestAverageTime(const QString& driver_number) {
+    if (socket_->state() == QAbstractSocket::ConnectedState) {
+        QRegExp re("\\d*");  // a digit (\d), zero or more times (*)
+        if (!driver_number.isEmpty() && re.exactMatch(driver_number)) {
+            qDebug() << driver_number;
+            QString message = "AVG:" + driver_number;
+            socket_->write(message.toUtf8());
+        }
+    } else {
+        socket_->connectToHost(ip_, port_);
+        emit responseReceived("Socket is not connected!!!");
+    }
+}
+
+QString Client::formatTime(double seconds) {
+    int h = static_cast<int>(seconds) / 3600;
+    int m = (static_cast<int>(seconds) % 3600) / 60;
+    int s = static_cast<int>(seconds) % 60;
+    int ms = static_cast<int>((seconds - static_cast<int>(seconds)) * 1000);
+    return QString(QTime(h, m, s, ms).toString("HH:mm:ss:zzz"));
+}
+
 void Client::handleError(QAbstractSocket::SocketError socket_error) {
     Q_UNUSED(socket_error);
     qDebug() << "Socket error:" << socket_->errorString();
@@ -83,23 +117,32 @@ void Client::handleError(QAbstractSocket::SocketError socket_error) {
 
 void Client::loadSettings()
 {
-    QSettings settings("config.ini", QSettings::IniFormat);
+    QSettings settings(QString(SOURCE_DIR) + "/resources/config/config.ini", QSettings::IniFormat);
+    QHash<QString,QString>values;
 
-    ip_ = settings.value("Network/IP", "127.0.0.1").toString();
+    settings.beginGroup("Network");
+    QStringList childKeys = settings.childKeys();
+    foreach (const QString &childKey,childKeys)
+        values.insert(childKey, settings.value(childKey).toString());
+    settings.endGroup();
+
+    // Read and validate IP address
+    QString tmp_ip = values["IP"];
     QRegExp ip_regex("\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b");
-    if (!ip_regex.exactMatch(ip_)) {
-        qDebug() << "Invalid IP address in configuration file. Using default IP: 127.0.0.1";
+    if (!ip_regex.exactMatch(tmp_ip))
         ip_ = "127.0.0.1";
-    }
+    else
+        ip_ = tmp_ip;
 
+    // Read and validate port number
     bool port_ok;
-    int temp_port = settings.value("Network/Port", 8088).toInt(&port_ok);
+    int temp_port = values["Port"].toInt(&port_ok);
     if (!port_ok || temp_port <= 0 || temp_port > 65535) {
         qDebug() << "Invalid port number in configuration file. Using default port: 8088";
-        port_ = 8088;
+        port_ = 8080;
     } else {
         port_ = temp_port;
     }
 
-    qDebug() << "Loaded settings: IP =" << ip_ << ", Port =" << port_;
+    qDebug() << "Loaded settings: IP = " << ip_ << ", Port = " << port_;
 }
