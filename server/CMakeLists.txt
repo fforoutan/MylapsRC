@@ -5,9 +5,11 @@ set(SOURCES
     src/server.cpp
     src/server_manager.cpp
     src/server_socket.cpp
+    src/message_handler.cpp
     include/server.h
     include/server_manager.h
     include/server_socket.h
+    include/message_handler.h
 )
 
 include_directories(${PROJECT_SOURCE_DIR}/include)

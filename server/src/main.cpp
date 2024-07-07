@@ -18,7 +18,6 @@ int main() {
 
     std::string ip = server.GetIP();
     int port = server.GetPort();
-    std::cout << ip << "  :  " << port;
     server_manager manager(port, 5);
 
     // Register signal handler for graceful shutdown
