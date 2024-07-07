@@ -8,6 +8,7 @@ int main(int argc, char *argv[]) {
 
     QQmlApplicationEngine engine;
     Client client;
+    app.setWindowIcon(QIcon(":/icon.jpg"));
     engine.rootContext()->setContextProperty("client", &client);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

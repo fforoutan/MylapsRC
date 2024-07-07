@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>logo-mylaps.svg</file>
+        <file>icon.jpg</file>
     </qresource>
 </RCC>

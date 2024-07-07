@@ -10,13 +10,32 @@ ApplicationWindow {
     minimumHeight:550
     title: qsTr("Client Application")
 
+    color: "#2b2b2b"
+    QtObject {
+        id: theme
+        property color backgroundColor: "#2b2b2b"
+        property color textColor: "#ffffff"
+        property color buttonColor: "#3b3b3b"
+        property color buttonTextColor: "#ffffff"
+        property color borderColor: "#757575"
+    }
+
     Rectangle {
         anchors.fill: parent
+        color: theme.backgroundColor
+        Image {
+            id: imageID
+            source: "qrc:/logo-mylaps.svg"
+            width: 200
+            height: 200
+            fillMode: Image.PreserveAspectFit
+        }
 
         RowLayout {
             id: rowll
             width: parent.width
             Layout.alignment: Qt.AlignVCenter
+            anchors.top: imageID.bottom
             height: 50
             spacing: 0
 
@@ -26,10 +45,13 @@ ApplicationWindow {
                 width: 200
                 height: 50
                 background: Rectangle {
+                    color: theme.buttonColor
                     radius: 10
+                    border.color: theme.borderColor
                 }
                 contentItem: Text {
                     text: qsTr("Upload Race Data")
+                    color: theme.buttonTextColor
                     font.pixelSize: 16
                 }
             }
@@ -37,6 +59,7 @@ ApplicationWindow {
 
             Label {
                 text: qsTr("Driver Number: ")
+                color: theme.textColor
                 id: driverLabel
                 Layout.alignment: Qt.AlignRight
                 font.pixelSize: 16
@@ -49,6 +72,12 @@ ApplicationWindow {
                 width: 150
                 height: 40
                 Layout.alignment: Qt.AlignLeft
+                color: theme.buttonTextColor
+                background: Rectangle {
+                    color: theme.buttonColor
+                    radius: 10
+                    border.color: theme.borderColor
+                }
                 font.pixelSize: 16
                 padding: 10
             }
@@ -67,11 +96,14 @@ ApplicationWindow {
                 width: 150
                 height: 40
                 background: Rectangle {
+                    color: theme.buttonColor
                     radius: 10
+                    border.color: theme.borderColor
                 }
                 contentItem: Text {
                     id: contentTextID
                     text: qsTr("Get Avg Time")
+                    color: theme.buttonTextColor
                     font.pixelSize: 16
                     anchors.centerIn: parent
                 }
@@ -79,7 +111,9 @@ ApplicationWindow {
         }
         Rectangle {
             width: parent.width
+            color: theme.buttonColor
             radius: 10
+            border.color: theme.borderColor
             anchors.top: rowll.bottom
             anchors.bottom:parent.bottom
             height: 300
@@ -91,9 +125,12 @@ ApplicationWindow {
                 clip: true
                 readOnly: true
                 text: "results:"
+                color: theme.textColor
                 font.pixelSize: 16
                 background: Rectangle {
+                    color: theme.buttonColor
                     radius: 10
+                    border.color: theme.borderColor
                 }
                 padding: 10
             }
