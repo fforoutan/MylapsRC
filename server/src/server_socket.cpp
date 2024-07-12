@@ -1,14 +1,26 @@
 #include "server_socket.h"
 #include <iostream>
-#include <thread>
+
+#ifdef USE_BOOST
+using boost::asio::ip::tcp;
+#endif
 
 server_socket::server_socket(int port)
-    : port_(port), listen_socket_(INVALID_SOCKET), running_(true) {}
+    : port_(port),
+    running_(true)
+#ifdef USE_BOOST
+    , acceptor_(io_context_, tcp::endpoint(tcp::v4(), port))
+#else
+    , listen_socket_(INVALID_SOCKET)
+#endif
+{}
 
 server_socket::~server_socket() {
     running_ = false;
+#ifndef USE_BOOST
     closesocket(listen_socket_);
     WSACleanup();
+#endif
     condition_.notify_all();
     if (accept_thread_.joinable()) {
         accept_thread_.join();
@@ -21,14 +33,20 @@ server_socket::~server_socket() {
 }
 
 void server_socket::Run() {
+#ifndef USE_BOOST
     SetupServer();
+#endif
     accept_thread_ = std::thread(&server_socket::AcceptConnections, this);
     for (size_t i = 0; i < std::thread::hardware_concurrency(); ++i) {
         worker_threads_.emplace_back(&server_socket::WorkerThread, this);
     }
+#ifdef USE_BOOST
+    io_context_.run();
+#endif
 }
 
 void server_socket::SetupServer() {
+
     WSADATA wsa_data;
     int result;
 
@@ -81,9 +99,14 @@ void server_socket::SetupServer() {
         exit(EXIT_FAILURE);
     }
 }
-
 void server_socket::AcceptConnections() {
     while (running_) {
+#ifdef USE_BOOST
+        auto socket = std::make_shared<tcp::socket>(io_context_);
+        acceptor_.accept(*socket);
+        std::cout << "Client connected: " << socket->remote_endpoint() << std::endl;
+        std::thread(&server_socket::HandleClient, this, socket).detach();
+#else
         SOCKET client_socket = accept(listen_socket_, nullptr, nullptr);
         if (client_socket == INVALID_SOCKET) {
             if (running_) {
@@ -93,6 +116,7 @@ void server_socket::AcceptConnections() {
         }
         std::cout << "Client connected: " << client_socket << std::endl;
         std::thread(&server_socket::HandleClient, this, client_socket).detach();
+#endif
     }
 }
 
@@ -112,6 +136,32 @@ void server_socket::WorkerThread() {
     }
 }
 
+#ifdef USE_BOOST
+void server_socket::HandleClient(tcp_socket socket) {
+    try {
+        char recv_buf[512];
+        boost::system::error_code error;
+        while (running_) {
+            std::size_t length = socket->read_some(boost::asio::buffer(recv_buf), error);
+            if (error == boost::asio::error::eof) {
+                std::cout << "Connection closing..." << std::endl;
+                break; // Connection closed cleanly by peer.
+            } else if (error) {
+                throw boost::system::system_error(error); // Some other error.
+            }
+
+            std::string message(recv_buf, length);
+            {
+                std::lock_guard<std::mutex> lock(queue_mutex_);
+                message_queue_.emplace(socket, message);
+            }
+            condition_.notify_one();
+        }
+    } catch (std::exception& e) {
+        std::cerr << "Exception in thread: " << e.what() << "\n";
+    }
+}
+#else
 void server_socket::HandleClient(SOCKET client_socket) {
     char recv_buf[512];
     int recv_buf_len = 512;
@@ -134,7 +184,12 @@ void server_socket::HandleClient(SOCKET client_socket) {
 
     closesocket(client_socket);
 }
+#endif
 
+#ifdef USE_BOOST
+void server_socket::SetMessageHandler(const std::function<void(const std::string&, tcp_socket)>& handler) {
+#else
 void server_socket::SetMessageHandler(const std::function<void(const std::string&, SOCKET)>& handler) {
+#endif
     message_handler_ = handler;
 }

@@ -2,9 +2,14 @@
 #define SERVER_MANAGER_H
 
 #include <memory>
+#include <unordered_map>
 #include "server_socket.h"
 #include "race_analyser.h"
 #include "message_handler.h"
+
+#ifdef USE_BOOST
+#include <boost/asio.hpp>
+#endif
 
 /**
  * @brief The ServerManager class manages client connections and race data.
@@ -22,18 +27,25 @@ public:
      */
     void Start();
 
-private:
     /**
      * @brief Sets the message handler function.
      * @param handler The function to handle incoming messages.
      */
+#ifdef USE_BOOST
+    void HandleMessage(const std::string& message, std::shared_ptr<boost::asio::ip::tcp::socket> client_socket);
+#else
     void HandleMessage(const std::string& message, SOCKET client_socket);
+#endif
 
+private:
     std::unique_ptr<server_socket> server_socket_;
     std::unique_ptr<message_handler> message_handler_;
+#ifdef USE_BOOST
+    std::unordered_map<std::shared_ptr<boost::asio::ip::tcp::socket>, std::unique_ptr<race_analyser>> client_data_;
+#else
     std::unordered_map<SOCKET, std::unique_ptr<race_analyser>> client_data_;
+#endif
     int total_laps_;
-
 };
 
 #endif  // SERVER_MANAGER_H
