@@ -94,7 +94,7 @@ std::string race_analyser::GetAverageTime(int driver_number) const {
     }
 
     const Driver& driver = it->second;
-    double avg_time = driver.GetBestLapTime();
+    double avg_time = driver.GetAverageTime();
     std::ostringstream oss;
     oss << "Driver " << driver_number << " average lap time: " << avg_time << "\n";
     return oss.str();

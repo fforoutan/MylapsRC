@@ -1,7 +1,8 @@
 #include "message_handler.h"
 #include <sstream>
 #include <iostream>
-#include <iomanip>
+//#include <iomanip>
+#include "server.h"
 
 bool message_handler::IsAverageTimeRequest(const std::string& message) const {
     return message.rfind("AVG:", 0) == 0;

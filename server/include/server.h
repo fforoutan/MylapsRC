@@ -30,12 +30,6 @@ public:
      * @return The port number as an integer.
      */
     int GetPort() const;
-
-
-private:
-    std::string ip_;  ///< The IP address.
-    int port_;  ///< The port number.
-
     /**
      * @brief Validates the given IP address.
      * @param ip The IP address to validate.
@@ -49,6 +43,13 @@ private:
      * @return True if the port number is valid, false otherwise.
      */
     bool IsValidPort(int port);
+
+
+private:
+    std::string ip_;  ///< The IP address.
+    int port_;  ///< The port number.
+
+
 };
 
 #endif // SERVER_H

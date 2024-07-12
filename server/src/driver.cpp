@@ -1,8 +1,10 @@
 #include "driver.h"
-#include <algorithm>
+//#include <algorithm>
 #include <numeric>
 #include <limits>
 #include <stdio.h>
+#include <iostream>
+
 Driver::Driver()
     : driver_number_(-1),
     best_lap_time_(std::numeric_limits<double>::max()),
@@ -23,10 +25,11 @@ void Driver::AddLapTime(double lap_day_time) {
         total_time_ += lap_time;
         if (lap_time < best_lap_time_) {
             best_lap_time_ = lap_time;
-            best_lap_number_ = lap_times_.size();
+            best_lap_number_ = lap_times_.size() - 1;
         }
     }
-
+    std::cout << GetBestLapTime() << " : " << GetBestLapNumber() << " : " << GetAverageTime() <<
+        " : " << GetTotalTime() << " : " <<  GetTotalLapsNumber() << std::endl;
 }
 
 double Driver::GetBestLapTime() const {
@@ -38,10 +41,10 @@ int Driver::GetBestLapNumber() const {
 }
 
 double Driver::GetAverageTime() const {
-    if (lap_times_.empty()) {
+    if (lap_times_.empty() || total_time_ == 0.0) {
         return 0.0;
     }
-    return total_time_ / lap_times_.size();
+    return total_time_ / (lap_times_.size() - 1);
 }
 
 double Driver::GetTotalTime() const {
@@ -59,5 +62,5 @@ std::vector<double> Driver::GetLapTimes() const
 
 int Driver::GetTotalLapsNumber() const
 {
-    return lap_times_.size();
+    return lap_times_.size() - 1;
 }

@@ -44,11 +44,6 @@ public:
      */
     std::string GetAverageTime(int driver_number) const;
 
-private:
-    int total_laps_; ///< The total number of laps in the race.
-    std::unordered_map<int, Driver> race_data_; ///< The race data, mapping driver numbers to their lap times.
-    std::string race_results_; ///< The results of the race.
-
     /**
      * @brief Processes the lap times and updates the race data.
      * @param lap_times A vector of LapTime objects containing the lap times to process.
@@ -61,6 +56,13 @@ private:
      * @return A string containing the postfix (e.g., "st", "nd", "rd", "th").
      */
     std::string getPostfix(int rank);
+
+private:
+    int total_laps_; ///< The total number of laps in the race.
+    std::unordered_map<int, Driver> race_data_; ///< The race data, mapping driver numbers to their lap times.
+    std::string race_results_; ///< The results of the race.
+
+
 };
 
 #endif  // RACE_ANALYSER_H
