@@ -1,5 +1,6 @@
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets Network Qml Quick REQUIRED)
 
@@ -22,3 +23,5 @@ target_link_libraries(client_lib Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Network Qt
 
 add_executable(client_app src/main.cpp src/client.cpp include/client.h resources/client.qrc)
 target_link_libraries(client_app client_lib)
+
+#add_subdirectory(tests)

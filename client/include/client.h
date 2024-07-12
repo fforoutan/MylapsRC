@@ -26,7 +26,7 @@ public:
     Q_INVOKABLE void requestAverageTime(const QString& driver_number);
 
 
-private slots:
+public slots:
     /**
      * @brief Handles messages received from the server and emits a signal with the response.
      */
@@ -38,7 +38,7 @@ private slots:
      */
     void handleError(QAbstractSocket::SocketError socket_error);
 
-private:
+public:
     /**
      * @brief Reads the contents of a CSV file and sends it to the server.
      * @param filename The name of the CSV file to read.

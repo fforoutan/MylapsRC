@@ -139,7 +139,7 @@ void Client::loadSettings()
     int temp_port = values["Port"].toInt(&port_ok);
     if (!port_ok || temp_port <= 0 || temp_port > 65535) {
         qDebug() << "Invalid port number in configuration file. Using default port: 8088";
-        port_ = 8080;
+        port_ = 8088;
     } else {
         port_ = temp_port;
     }

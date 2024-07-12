@@ -41,6 +41,7 @@ public:
      */
     void Run();
 
+    void Stop();
     /**
      * @brief Sets the message handler function.
      * @param handler The function to handle incoming messages.

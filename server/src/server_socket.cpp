@@ -13,9 +13,10 @@ server_socket::server_socket(int port)
 #else
     , listen_socket_(INVALID_SOCKET)
 #endif
-{}
+{std::cout << "server_socket constructor called\n";}
 
 server_socket::~server_socket() {
+    std::cout << "server_socket destructor called\n";
     running_ = false;
 #ifndef USE_BOOST
     closesocket(listen_socket_);
@@ -30,9 +31,11 @@ server_socket::~server_socket() {
             worker.join();
         }
     }
+     std::cout << "server_socket destructor finished\n";
 }
 
 void server_socket::Run() {
+std::cout << "server_socket Run called\n";
 #ifndef USE_BOOST
     SetupServer();
 #endif
@@ -43,10 +46,31 @@ void server_socket::Run() {
 #ifdef USE_BOOST
     io_context_.run();
 #endif
+     std::cout << "server_socket Run finished\n";
+}
+
+void server_socket::Stop()
+{
+      std::cout << "server_socket Stop called\n";
+    running_ = false;
+#ifdef USE_BOOST
+      io_context_.stop();
+#endif
+
+    condition_.notify_all();
+    if (accept_thread_.joinable()) {
+        accept_thread_.join();
+    }
+    for (auto& worker : worker_threads_) {
+        if (worker.joinable()) {
+            worker.join();
+        }
+    }
+    std::cout << "server_socket Stop finished\n";
 }
 
 void server_socket::SetupServer() {
-
+#ifndef USE_BOOST
     WSADATA wsa_data;
     int result;
 
@@ -98,6 +122,7 @@ void server_socket::SetupServer() {
         WSACleanup();
         exit(EXIT_FAILURE);
     }
+#endif
 }
 void server_socket::AcceptConnections() {
     while (running_) {
