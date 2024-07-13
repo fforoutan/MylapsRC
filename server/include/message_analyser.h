@@ -1,14 +1,14 @@
-#ifndef MESSAGE_HANDLER_H
-#define MESSAGE_HANDLER_H
+#ifndef MESSAGE_ANALYSER_H
+#define MESSAGE_ANALYSER_H
 
 #include <string>
 #include <vector>
 #include "race_analyser.h"
 
 /**
- * @brief The message_handler class provides methods to analyze and interpret incoming messages.
+ * @brief The message_analyser class provides methods to analyze and interpret incoming messages.
  */
-class message_handler {
+class message_analyser {
 public:
     /**
      * @brief Checks if the message is a request for the average time of a driver.
@@ -39,4 +39,4 @@ public:
     double ParseTime(const std::string& time_str) const;
 };
 
-#endif  // MESSAGE_HANDLER_H
+#endif  // MESSAGE_ANALYSER_H

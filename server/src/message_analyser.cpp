@@ -1,18 +1,18 @@
-#include "message_handler.h"
+#include "message_analyser.h"
 #include <sstream>
 #include <iostream>
 //#include <iomanip>
 #include "server.h"
 
-bool message_handler::IsAverageTimeRequest(const std::string& message) const {
+bool message_analyser::IsAverageTimeRequest(const std::string& message) const {
     return message.rfind("AVG:", 0) == 0;
 }
 
-int message_handler::ExtractDriverNumber(const std::string& message) const {
+int message_analyser::ExtractDriverNumber(const std::string& message) const {
     return std::stoi(message.substr(4));
 }
 
-std::vector<LapTime> message_handler::ParseRaceData(const std::string& message) const {
+std::vector<LapTime> message_analyser::ParseRaceData(const std::string& message) const {
     std::vector<LapTime> lap_times;
     std::stringstream ss(message);
     std::string line;
@@ -31,7 +31,7 @@ std::vector<LapTime> message_handler::ParseRaceData(const std::string& message) 
     return lap_times;
 }
 
-double message_handler::ParseTime(const std::string& time_str) const {
+double message_analyser::ParseTime(const std::string& time_str) const {
     int hours, minutes, seconds;
     char delimiter;
     std::stringstream ss(time_str);

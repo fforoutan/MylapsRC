@@ -6,13 +6,13 @@ set(SOURCES
     src/server.cpp
     src/server_manager.cpp
     src/server_socket.cpp
-    src/message_handler.cpp
+    src/message_analyser.cpp
     src/race_analyser.cpp
     src/driver.cpp
     include/server.h
     include/server_manager.h
     include/server_socket.h
-    include/message_handler.h
+    include/message_analyser.h
     include/race_analyser.h
     include/driver.h
 )

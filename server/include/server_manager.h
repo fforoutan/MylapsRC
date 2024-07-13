@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include "server_socket.h"
 #include "race_analyser.h"
-#include "message_handler.h"
+#include "message_analyser.h"
 
 #ifdef USE_BOOST
 #include <boost/asio.hpp>
@@ -39,7 +39,7 @@ public:
 
 private:
     std::unique_ptr<server_socket> server_socket_;
-    std::unique_ptr<message_handler> message_handler_;
+    std::unique_ptr<message_analyser> message_analyser_;
 #ifdef USE_BOOST
     std::unordered_map<std::shared_ptr<boost::asio::ip::tcp::socket>, std::unique_ptr<race_analyser>> client_data_;
 #else
