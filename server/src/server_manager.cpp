@@ -25,6 +25,11 @@ void server_manager::Start() {
     server_socket_->Run();
 }
 
+void server_manager::Stop()
+{
+    server_socket_->Stop();
+}
+
 #ifdef USE_BOOST
 void server_manager::HandleMessage(const std::string& message, std::shared_ptr<boost::asio::ip::tcp::socket> client_socket) {
     auto& race_analyser = client_data_[client_socket];

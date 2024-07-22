@@ -54,14 +54,28 @@ TEST_F(ServerSocketTest, CanAcceptConnections) {
 #endif
 #ifdef USE_BOOST
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include "server_socket.h"
 #include <thread>
 #include <chrono>
 #include <boost/asio.hpp>
 #include <future>
 #include <atomic>
-
+using namespace testing;
 using boost::asio::ip::tcp;
+
+class MockSocket {
+public:
+    virtual ~MockSocket() = default;
+    virtual void write(const std::string& message) = 0;
+    virtual std::string read(size_t length) = 0;
+};
+
+class MockSocketImpl : public MockSocket {
+public:
+    MOCK_METHOD(void, write, (const std::string& message), (override));
+    MOCK_METHOD(std::string, read, (size_t length), (override));
+};
 
 class ServerSocketTest : public ::testing::Test {
 protected:
@@ -161,5 +175,21 @@ TEST_F(ServerSocketTest, CanAcceptConnections) {
 
     std::cout << "CanAcceptConnections test completed. Stopping server...\n";
     std::cout << "Server stopped.\n";
+}
+TEST_F(ServerSocketTest, MockClientInteraction) {
+    auto mock_socket = std::make_shared<MockSocketImpl>();
+
+    EXPECT_CALL(*mock_socket, read(13))
+        .Times(1)
+        .WillOnce(Return("Hello, Farzad!"));
+
+    EXPECT_CALL(*mock_socket, write("Hello, Farzad!"))
+        .Times(1);
+
+    // Simulate the client sending and receiving messages
+    std::string test_message = mock_socket->read(13);
+    mock_socket->write(test_message);
+
+    EXPECT_EQ(test_message, "Hello, Farzad!");
 }
 #endif

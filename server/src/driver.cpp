@@ -1,5 +1,4 @@
 #include "driver.h"
-//#include <algorithm>
 #include <numeric>
 #include <limits>
 #include <stdio.h>

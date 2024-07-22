@@ -28,6 +28,11 @@ public:
     void Start();
 
     /**
+     * @brief Stops the server .
+     */
+    void Stop();
+
+    /**
      * @brief Sets the message handler function.
      * @param handler The function to handle incoming messages.
      */
